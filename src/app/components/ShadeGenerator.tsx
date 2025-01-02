@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect} from "react";
 
-interface hslInterface {
+interface ShadeGeneratorProps {
     hsl: [number, number, number];
+    shades: Shade[];
+    onShadesGenerated: (shades: Shade[]) => void;
 }
 
 interface Shade {
@@ -12,9 +14,7 @@ interface Shade {
     lightness: number;
 }
 
-export default function ShadeGenerator({ hsl }: hslInterface) {
-    const [shades, setShades] = useState<Shade[]>([]);
-
+export default function ShadeGenerator({ hsl, shades, onShadesGenerated }: ShadeGeneratorProps) {
     useEffect(() => {
         const generateShades = () => {
             let [ hue, saturation, lightness ] = hsl;
@@ -29,7 +29,7 @@ export default function ShadeGenerator({ hsl }: hslInterface) {
                 shades.push({hue, saturation, lightness: adjustedLightness})
             }
 
-            for (let i = 1; i < 6; i++) {
+            for (let i = 1; i < 5; i++) {
                 const adjustedLightness = Math.max(0, Math.min(100, lightness + i * 10));
                 shades.push({hue, saturation, lightness: adjustedLightness})
             }
@@ -39,8 +39,9 @@ export default function ShadeGenerator({ hsl }: hslInterface) {
             return sortedShades;
         }
 
-        setShades(generateShades());
-    }, [])
+        const shades = generateShades();
+        onShadesGenerated(shades);
+    }, [hsl])
     
     return (
         <div className="flex">
